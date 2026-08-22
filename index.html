@@ -12,7 +12,7 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;font-family:Arial,sans-serif;background:#f2f2f2;color:#222;}
-button,input{font-family:Arial,sans-serif;}
+button,input,select{font-family:Arial,sans-serif;}
 button{border:0;cursor:pointer;}
 .hidden{display:none!important;}
 
@@ -24,10 +24,18 @@ button{border:0;cursor:pointer;}
 .auth-box{width:390px;max-width:92%;background:white;border-radius:18px;padding:30px;box-shadow:0 10px 35px #0002;}
 .auth-logo{text-align:center;font-size:35px;font-weight:900;}
 .subtitle{text-align:center;color:#777;margin:10px 0 25px;}
-input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9px;outline:none;font-size:16px;}
+input,select{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9px;outline:none;font-size:16px;background:white;}
 .auth button{width:100%;padding:14px;margin-top:10px;border-radius:9px;background:#111;color:white;font-size:16px;font-weight:bold;}
 .auth .light{background:#eee;color:#222;}
 .message{text-align:center;min-height:25px;margin-top:10px;}
+
+/* نافذة اختيار الجهاز */
+#deviceModal{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:15px;}
+.deviceBox{width:400px;max-width:100%;background:white;border-radius:20px;padding:30px;text-align:center;box-shadow:0 15px 50px #0006;}
+.deviceBox h2{color:#111;margin-bottom:10px;}
+.deviceBox p{color:#666;margin-bottom:20px;}
+.deviceBtn{width:100%;padding:15px;margin:10px 0;border-radius:12px;background:#111;color:white;font-size:18px;font-weight:bold;display:flex;align-items:center;justify-content:center;gap:10px;transition:0.2s;}
+.deviceBtn:hover{background:#333;}
 
 #home{min-height:100vh;}
 .topbar{position:fixed;top:0;left:0;right:0;height:64px;background:white;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:20;}
@@ -47,14 +55,22 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 .game-info{padding:16px;}
 .game-info h3{margin:0 0 7px;}
 .game-info p{color:#777;margin:0;}
-.play-button{width:100%;margin-top:13px;padding:13px;border-radius:9px;background:#111;color:white;font-size:16px;font-weight:bold;}
+.game-buttons-row{display:flex;gap:8px;margin-top:13px;}
+.play-button{flex:1;padding:13px;border-radius:9px;background:#111;color:white;font-size:15px;font-weight:bold;}
+.online-lobby-button{flex:1;padding:13px;border-radius:9px;background:#00ffcc;color:#111;font-size:15px;font-weight:bold;}
 
-.friend-box{background:white;padding:20px;border-radius:15px;max-width:650px;margin-bottom:20px;}
+.friend-box{background:white;padding:20px;border-radius:15px;max-width:650px;margin-bottom:20px;box-shadow:0 4px 15px #0001;}
 .friend-row{display:flex;gap:8px;}
 .friend-row input{margin:0;}
 .friend-row button{width:140px;background:#111;color:white;border-radius:9px;font-weight:bold;}
-.friend{background:white;padding:13px;margin:8px 0;border-radius:12px;display:flex;align-items:center;gap:12px;}
+.friend{background:white;padding:13px;margin:8px 0;border-radius:12px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.friend-request-card{background:#e6fffa;border:2px solid #00ffcc;padding:15px;margin:10px 0;border-radius:14px;display:flex;align-items:center;justify-content:space-between;}
 .avatar{width:50px;height:50px;border-radius:50%;background:#111;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:22px;}
+
+.server-card{background:white;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 4px 15px #0001;display:flex;align-items:center;justify-content:space-between;border:2px solid #eee;}
+.server-info h3{margin:0 0 5px;}
+.server-info p{margin:0;color:#666;font-size:14px;}
+.join-server-btn{background:#00ffcc;color:#111;padding:10px 20px;border-radius:8px;font-weight:bold;font-size:15px;}
 
 .wardrobe-container{display:flex;gap:20px;flex-wrap:wrap;}
 .preview-panel{flex:1;min-width:280px;background:white;border-radius:15px;padding:15px;box-shadow:0 4px 15px #0001;text-align:center;display:flex;flex-direction:column;align-items:center;}
@@ -82,13 +98,90 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 #joystickStick{position:absolute;width:55px;height:55px;left:33px;top:33px;border-radius:50%;background:#ffffffbb;border:2px solid white;}
 .jumpButton{position:absolute;bottom:45px;right:35px;width:75px;height:75px;border-radius:50%;background:#ffffffaa;border:2px solid white;font-size:32px;pointer-events:auto;touch-action:none;}
 
+#flyBtn{position:absolute;bottom:135px;right:35px;width:65px;height:65px;border-radius:50%;background:#ffaa00;border:2px solid white;font-size:24px;pointer-events:auto;touch-action:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+
 #game3d{position:fixed;inset:0;background:#87ceeb;z-index:500;}
 #gameCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 #gameUI{position:absolute;inset:0;pointer-events:none;}
-.gameTop{position:absolute;top:15px;left:15px;right:15px;display:flex;justify-content:space-between;}
+.gameTop{position:absolute;top:15px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:center;z-index:750;}
 .gameInfo{background:#0009;color:white;padding:10px 15px;border-radius:12px;font-weight:bold;}
-.backGame{pointer-events:auto;background:#0009;color:white;padding:10px 15px;border-radius:10px;}
-#winGame{position:absolute;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;}
+.backGame{pointer-events:auto;background:#ff3333;color:white;padding:10px 15px;border-radius:10px;font-weight:bold;}
+
+#chatToggleButton{pointer-events:auto;background:#00ffcc;color:#111;width:45px;height:45px;border-radius:50%;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px #0004;}
+#chatPopup{position:absolute;top:70px;right:15px;width:280px;background:#0008;backdrop-filter:blur(5px);border-radius:12px;padding:10px;pointer-events:auto;display:flex;flex-direction:column;gap:8px;z-index:800;}
+#chatPopup.hidden{display:none!important;}
+.chatInputRow{display:flex;gap:6px;}
+#chatInput{width:100%;padding:8px;border-radius:6px;border:0;font-size:14px;outline:none;margin:0;}
+#sendChatBtn{background:#00ffcc;color:#111;padding:0 14px;border-radius:6px;font-weight:bold;}
+
+#speechBubbles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:600;}
+.speechBubble{position:absolute;background:white;color:#111;padding:6px 12px;border-radius:14px;font-size:13px;font-weight:bold;box-shadow:0 4px 12px #0003;transform:translate(-50%,-100%);white-space:nowrap;transition:opacity 0.3s;}
+.speechBubble::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-width:6px 6px 0;border-style:solid;border-color:white transparent;display:block;width:0;}
+
+.nameTag{
+    position:absolute;
+    color:white;
+    font-size:14px;
+    font-weight:bold;
+    transform:translate(-50%,-100%);
+    white-space:nowrap;
+    pointer-events:none;
+    z-index:550;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    text-align:center;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.95), -2px -2px 4px rgba(0,0,0,0.95), 2px -2px 4px rgba(0,0,0,0.95), -2px 2px 4px rgba(0,0,0,0.95), 0 0 6px rgba(0,0,0,0.9);
+}
+.nameTag .rank-badge{
+    font-size:13px;
+    margin-bottom:1px;
+    font-weight: 900;
+}
+
+#joinNotification{position:absolute;top:20px;left:50%;transform:translateX(-50%) translateY(-50px);background:rgba(0,0,0,0.85);color:white;padding:10px 20px;border-radius:20px;font-weight:bold;font-size:15px;z-index:1000;pointer-events:none;transition:transform 0.4s ease, opacity 0.4s ease;opacity:0;box-shadow:0 5px 20px #0005;border:2px solid transparent;animation:rainbowBorder 3s linear infinite;}
+#joinNotification.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+@keyframes rainbowBorder {
+    0% { border-color: #ff0000; }
+    20% { border-color: #ff8800; }
+    40% { border-color: #ffff00; }
+    60% { border-color: #00ff00; }
+    80% { border-color: #00ffff; }
+    100% { border-color: #ff00ff; }
+}
+
+.rainbow-rank {
+    color: #ffdd00;
+    text-shadow: 0 0 8px #ff4500, 2px 2px 4px rgba(0,0,0,0.95), -2px -2px 4px rgba(0,0,0,0.95);
+    animation: rankGlow 1.5s ease-in-out infinite alternate;
+}
+@keyframes rankGlow {
+    0% { color: #ff3333; text-shadow: 0 0 6px #ff0000, 2px 2px 4px rgba(0,0,0,0.95); }
+    33% { color: #ffff33; text-shadow: 0 0 6px #ffff00, 2px 2px 4px rgba(0,0,0,0.95); }
+    66% { color: #33ff33; text-shadow: 0 0 6px #00ff00, 2px 2px 4px rgba(0,0,0,0.95); }
+    100% { color: #33ffff; text-shadow: 0 0 6px #00ffff, 2px 2px 4px rgba(0,0,0,0.95); }
+}
+
+.admin-rank {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-weight: 900;
+    background-color: #050000;
+    color: #ff1a1a;
+    border: 1px solid #ff0000;
+    text-shadow: 0 0 6px #ff0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    animation: adminGlowAnim 0.9s ease-in-out infinite alternate;
+}
+@keyframes adminGlowAnim {
+    0% { color: #ff3333; background-color: #080000; border-color: #ff0000; text-shadow: 0 0 5px #ff0000; }
+    100% { color: #ffffff; background-color: #220000; border-color: #ff6666; text-shadow: 0 0 10px #ff0000, 0 0 20px #ff3333; }
+}
+
+#winGame{position:absolute;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;z-index:900;}
 .winBox{width:330px;max-width:90%;background:white;border-radius:18px;padding:25px;text-align:center;color:#222;}
 .winBox button{width:100%;padding:13px;border-radius:10px;background:#111;color:white;margin-top:8px;font-weight:bold;}
 
@@ -105,7 +198,19 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 </head>
 <body>
 
+<canvas id="fireworksCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:99999;display:none;"></canvas>
+
 <div id="splash"><div class="logo">ZRXBLOX</div></div>
+
+<!-- نافذة اختيار الجهاز تظهر بعد تسجيل الدخول أو إنشاء الحساب -->
+<div id="deviceModal" class="hidden">
+<div class="deviceBox">
+<h2>💻 اختر جهاز التحكم</h2>
+<p>اختر نوع جهازك لتفعيل أنظمة التحكم المناسبة:</p>
+<button class="deviceBtn" onclick="setPlayerDevice('pc')">🖥️ كمبيوتر (PC) - WASD + كليك يمين للرؤية</button>
+<button class="deviceBtn" onclick="setPlayerDevice('mobile')" style="background:#00ffcc; color:#111;">📱 جوال (Mobile) - أزرار تحكم على الشاشة</button>
+</div>
+</div>
 
 <section id="loginPage" class="auth">
 <div class="auth-box">
@@ -141,7 +246,8 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 <aside class="sidebar">
 <button class="menu-btn" onclick="openPage('homePage')">🏠 الرئيسية</button>
 <button class="menu-btn" onclick="openPage('gamesPage')">🎮 الألعاب</button>
-<button class="menu-btn" onclick="openPage('friendsPage')">👥 الغرف والأونلاين</button>
+<button class="menu-btn" onclick="openPage('serversPage')">🟢 أونلاين</button>
+<button class="menu-btn" onclick="openPage('friendsPage')">👥 الغرف والأصدقاء</button>
 <button class="menu-btn" onclick="openPage('donatePage')">💸 التبرع</button>
 <button class="menu-btn" onclick="openPage('clothesPage')">👕 الملابس</button>
 <button class="menu-btn" onclick="openPage('profilePage')">👤 الشخصية</button>
@@ -160,7 +266,10 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 <div class="game-info">
 <h3>ZRX Parkour 3D</h3>
 <p>ماب باركور ثلاثي الأبعاد</p>
+<div class="game-buttons-row">
 <button class="play-button" onclick="startParkour()">لعب الآن</button>
+<button class="online-lobby-button" onclick="openPage('serversPage')">🟢 أونلاين</button>
+</div>
 </div>
 </div>
 </div>
@@ -174,33 +283,85 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 <div class="game-info">
 <h3>ZRX Parkour 3D</h3>
 <p>تحدي باركور ثلاثي الأبعاد</p>
-<button class="play-button" onclick="startParkour()">دخول الماب</button>
+<div class="game-buttons-row">
+<button class="play-button" onclick="startParkour()">لعب الآن</button>
+<button class="online-lobby-button" onclick="openPage('serversPage')">🟢 أونلاين</button>
 </div>
 </div>
+</div>
+</div>
+</div>
+
+<div id="serversPage" class="page">
+<h1>🟢 سيرفرات الأونلاين المتاحة</h1>
+<p style="color:#666; margin-bottom:20px;">انضم بضغطة زر إلى السيرفرات النشطة وابدأ اللعب مباشرة مع اللاعبين!</p>
+
+<div class="server-card">
+<div class="server-info">
+<h3>🏃 ZRX Parkour - السيرفر الرئيسي #1</h3>
+<p>🟢 الحالة: متاح للعب الأونلاين • الخريطة: باركور 3D</p>
+</div>
+<button class="join-server-btn" onclick="joinServer('ZRX_Main_Server_1', 'سيرفر الباركور #1')">انضمام سريع</button>
+</div>
+
+<div class="server-card">
+<div class="server-info">
+<h3>⭐ سيرفر الأصدقاء الخاص #2</h3>
+<p>🟢 الحالة: متاح • مخصص للعب الحر والتحديات</p>
+</div>
+<button class="join-server-btn" onclick="joinServer('ZRX_Friends_Server_2', 'سيرفر الأصدقاء #2')">انضمام سريع</button>
+</div>
+
+<div class="friend-box" style="margin-top:25px;">
+<h3>🌐 أو أدخل اسم غرفة/سيرفر مخصص</h3>
+<div class="friend-row" style="margin-top:10px;">
+<input id="customServerInput" placeholder="اكتب اسم السيرفر (مثال: pro123)">
+<button onclick="joinCustomServer()" style="background:#00ffcc; color:#111;">دخول</button>
+</div>
+<div id="serverStatusMsg" style="margin-top:10px; font-weight:bold;"></div>
 </div>
 </div>
 
 <div id="friendsPage" class="page">
-<h1>🌐 نظام الغرف والأونلاين</h1>
-<div class="friend-box" style="background:#111; color:white;">
-<h3>🚪 انضم أو أنشئ غرفة لعب</h3>
-<p style="color:#aaa;">اكتب اسم غرفة (مثل: <code>room123</code> أو أي اسم تختاره أنت وصديقك)، واضغط دخول لتبلغوا نفس الغرفة فوراً!</p>
-<div class="friend-row" style="margin-top:12px;">
-<input id="roomNameInput" placeholder="اكتب اسم الغرفة هنا (مثال: zrx1)">
-<button onclick="joinRoom()" style="background:#00ffcc; color:#111;">دخول الغرفة</button>
+<h1>👥 الغرف والأصدقاء والإدارة</h1>
+
+<div id="ownerAddCoinsPanel" class="friend-box hidden" style="border: 2px solid #ffaa00; background: #fffdf5;">
+<h3 style="color:#b27b00;">👑 لوحة تحكم المالك الخاصة (إضافة العملات)</h3>
+<p style="font-size:13px; color:#555;">اكتب عدد العملات التي ترغب بإضافتها لرصيدك فوراً.</p>
+<input id="ownerCoinsInput" type="number" placeholder="أدخل عدد العملات (مثال: 5000)" style="margin-bottom:8px;" min="1">
+<button onclick="ownerAddCoins()" style="width:100%; background:#ffaa00; color:#111; padding:12px; border-radius:9px; font-weight:bold; font-size:16px;">إضافة العملات فوراً 🪙</button>
+<div id="ownerCoinsMsg" style="margin-top:8px; font-weight:bold;"></div>
 </div>
-<div id="onlineStatusMsg" style="margin-top:12px; font-weight:bold;"></div>
+
+<div id="adminPanel" class="friend-box hidden" style="border: 2px solid #ff1a1a; background: #fff8f8;">
+<h3 style="color:#d32f2f;">🛡️ لوحة إدارة الرتب والحظر (مخصصة للمالك Alkhalil7_ فقط)</h3>
+<p style="font-size:13px; color:#555;">اكتب اسم اللاعب، اختر الرتبة المناسبة له، أو قم بحظره من اللعبة.</p>
+<input id="targetPlayerInput" placeholder="اسم اللاعب المستهدف" style="margin-bottom:8px;">
+<select id="rankSelect" style="margin-bottom:8px;">
+<option value="none">بدون رتبة (عادي)</option>
+<option value="admin">[ADMIN] مشرف</option>
+<option value="owner">[OWNER] مالك</option>
+</select>
+<div style="display:flex; gap:8px;">
+<button onclick="applyPlayerRank()" style="flex:1; background:#111; color:white; padding:12px; border-radius:9px; font-weight:bold;">تحديث رتبة اللاعب</button>
+<button onclick="banPlayerAccount()" style="flex:1; background:#d32f2f; color:white; padding:12px; border-radius:9px; font-weight:bold;">حظر الحساب ⛔</button>
+</div>
+<div id="adminMsg" style="margin-top:8px; font-weight:bold;"></div>
 </div>
 
 <div class="friend-box">
-<h3>إضافة صديق للقائمة</h3>
+<h3>إرسال طلب صداقة للاعب</h3>
 <div class="friend-row">
 <input id="friendName" placeholder="اسم اللاعب">
-<button onclick="addFriend()">إضافة</button>
+<button onclick="addFriend()">إرسال طلب</button>
 </div>
 <div id="friendMsg" style="margin-top:8px;"></div>
 </div>
-<h2>قائمة أصدقائي</h2>
+
+<h2>📩 طلبات الصداقة الواردة</h2>
+<div id="friendRequestsList"></div>
+
+<h2 style="margin-top:25px;">👥 قائمة أصدقائي</h2>
 <div id="friendList"></div>
 </div>
 
@@ -237,10 +398,20 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 <h2 id="profileName">اللاعب</h2>
 <p>🪙 العملات: <span id="profileCoins">0</span></p>
 <p>👕 الملابس: <span id="profileClothes">الأساسي</span></p>
+<p>💻 جهاز اللعب: <span id="profileDevice">غير محدد</span> <button onclick="openDeviceModal()" style="padding:4px 10px; margin-right:10px; background:#111; color:white; border-radius:6px; font-size:12px;">تغيير الجهاز</button></p>
 </div>
 </div>
 </main>
 </section>
+
+<div id="donationModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99990;display:flex;align-items:center;justify-content:center;">
+  <div style="background:white;padding:28px;border-radius:20px;text-align:center;max-width:380px;width:90%;box-shadow:0 10px 35px rgba(0,0,0,0.5);border:3px solid #00ffcc;">
+     <div style="font-size:55px;margin-bottom:10px;">🎆 🪙 🎆</div>
+     <h2 style="margin:0 0 10px 0;color:#111;">وصلك تبرع جديد!</h2>
+     <p id="donationModalText" style="font-size:18px;color:#333;margin:15px 0;font-weight:bold;line-height:1.5;"></p>
+     <button onclick="closeDonationModal()" style="width:100%;padding:14px;background:#111;color:white;border-radius:10px;font-weight:bold;font-size:16px;">شكراً جزيلاً! ❤️</button>
+  </div>
+</div>
 
 <div id="missionsModal" class="hidden">
 <div class="missionBox">
@@ -266,13 +437,43 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 <canvas id="gameCanvas"></canvas>
 <div id="gameUI">
 <div class="gameTop">
-<div class="gameInfo">🏃 ZRX Parkour 3D <span id="onlineStatusText" style="color:#00ffcc; font-size:12px;">(غير متصل)</span></div>
-<button class="backGame" onclick="exitParkour()">رجوع</button>
+<div class="gameInfo">🏃 <span id="currentServerTitle">ZRX Parkour 3D</span> <span id="onlineStatusText" style="color:#00ffcc; font-size:12px;">(أونلاين)</span></div>
+<div style="display:flex; align-items:center; gap:10px;">
+<button id="chatToggleButton" onclick="toggleChatPopup()">💬</button>
+<button class="backGame" onclick="exitParkour()">مغادرة 🚪</button>
 </div>
-<div class="mobileControls">
+</div>
+
+<div id="joinNotification">تم انضمام <span id="joinNotifName">لاعب</span> إلى سيرفر <span id="joinNotifServer">سيرفر</span></div>
+
+<div id="playerTag" class="nameTag">
+    <span class="rank-badge"></span>
+    <span class="username-text">لاعب</span>
+</div>
+<div id="remotePlayerTag" class="nameTag hidden">
+    <span class="rank-badge"></span>
+    <span class="username-text">لاعب متصل</span>
+</div>
+
+<div id="chatPopup" class="hidden">
+<div class="chatInputRow">
+<input id="chatInput" placeholder="اكتب رسالتك..." maxlength="60">
+<button id="sendChatBtn" onclick="sendChatMessage()">إرسال</button>
+</div>
+</div>
+
+<div id="speechBubbles">
+<div id="playerBubble" class="speechBubble hidden"></div>
+<div id="remoteBubble" class="speechBubble hidden"></div>
+</div>
+
+<!-- عناصر تحكم الجوال تظهر فقط إذا اختار المستخدم جوال -->
+<div id="mobileControlsContainer" class="mobileControls hidden">
 <div id="joystick"><div id="joystickStick"></div></div>
 <button id="jumpBtn" class="jumpButton">↑</button>
+<button id="flyBtn" class="hidden" onclick="toggleFlyMode()">✈️</button>
 </div>
+
 <div id="winGame" class="hidden">
 <div class="winBox">
 <h1>🏆 أحسنت!</h1>
@@ -288,96 +489,256 @@ input{width:100%;padding:14px;margin:6px 0;border:1px solid #ccc;border-radius:9
 <script>
 let peer = null;
 let conn = null;
-let remotePlayer = null;
-const PREFIX = "ZRXBLOX_ROOM_";
+const PREFIX = "ZRXBLOX_SERVER_";
+let currentActiveServerName = "سيرفر عام";
+let remotePlayerName = "لاعب متصل";
+let isFlying = false;
 
-function initPeer() {
-    if (typeof Peer === 'undefined') return;
-    peer = new Peer();
-    
-    peer.on('open', (id) => {
-        // تم تهيئة البير بنجاح
-    });
-
-    peer.on('connection', (connection) => {
-        conn = connection;
-        setupConnectionEvents();
-        document.getElementById("onlineStatusMsg").textContent = "✅ انضم إليك صديق في الغرفة بنجاح!";
-        document.getElementById("onlineStatusMsg").style.color = "#00ffcc";
-        document.getElementById("onlineStatusText").textContent = "(متصل أونلاين)";
-    });
+function getPlayerRank(username) {
+    if(!username) return "none";
+    if(username.trim() === "Alkhalil7_") return "owner";
+    const users = getUsers();
+    const key = username.trim();
+    if(users[key] && users[key].rank && users[key].rank !== "owner") {
+        return users[key].rank;
+    }
+    return "none";
 }
 
-function joinRoom() {
-    const roomInput = document.getElementById("roomNameInput").value.trim();
-    const msg = document.getElementById("onlineStatusMsg");
-    if(!roomInput) {
-        msg.textContent = "❌ الرجاء كتابة اسم الغرفة أولاً.";
-        msg.style.color = "red";
-        return;
+function renderRankBadgeHTML(username) {
+    const rank = getPlayerRank(username);
+    if(rank === "owner") {
+        return `<span class="rainbow-rank">[OWNER]</span>`;
+    } else if(rank === "admin") {
+        return `<span class="admin-rank">[ADMIN]</span>`;
     }
-    
-    const targetId = PREFIX + roomInput;
-    
-    if(peer) {
-        peer.destroy();
+    return "";
+}
+
+function showJoinNotification(playerName, serverName) {
+    const notif = document.getElementById("joinNotification");
+    const nameSpan = document.getElementById("joinNotifName");
+    const serverSpan = document.getElementById("joinNotifServer");
+
+    const badgeHTML = renderRankBadgeHTML(playerName);
+    if(badgeHTML !== "") {
+        nameSpan.innerHTML = `${badgeHTML} ${playerName}`;
+    } else {
+        nameSpan.textContent = playerName;
     }
+
+    serverSpan.textContent = serverName;
+    notif.classList.add("show");
+
+    setTimeout(() => {
+        notif.classList.remove("show");
+    }, 4000);
+}
+
+function updateNameTagDisplay() {
+    const currentUser = getCurrentUser();
+    const myName = currentUser ? currentUser.username : "لاعب";
     
-    // إنشاء Peer باسم الغرفة الثابت ليتمكن الصديق من الاتصال به مباشرة
+    const tag = document.getElementById("playerTag");
+    const myRankEl = tag.querySelector(".rank-badge");
+    const myNameEl = tag.querySelector(".username-text");
+
+    const myBadge = renderRankBadgeHTML(myName);
+    if(myBadge !== "") {
+        myRankEl.innerHTML = myBadge;
+        myRankEl.style.display = "block";
+    } else {
+        myRankEl.innerHTML = "";
+        myRankEl.style.display = "none";
+    }
+    myNameEl.textContent = myName;
+
+    const remoteTag = document.getElementById("remotePlayerTag");
+    const remoteRankEl = remoteTag.querySelector(".rank-badge");
+    const remoteNameEl = remoteTag.querySelector(".username-text");
+
+    const remoteBadge = renderRankBadgeHTML(remotePlayerName);
+    if(remoteBadge !== "") {
+        remoteRankEl.innerHTML = remoteBadge;
+        remoteRankEl.style.display = "block";
+    } else {
+        remoteRankEl.innerHTML = "";
+        remoteRankEl.style.display = "none";
+    }
+    remoteNameEl.textContent = remotePlayerName;
+}
+
+function connectToServer(serverKey, displayName) {
+    if(peer) { peer.destroy(); }
+    currentActiveServerName = displayName;
+    
+    const targetId = PREFIX + serverKey;
     peer = new Peer(targetId);
     
     peer.on('open', (id) => {
-        msg.textContent = "⏳ أنشأت الغرفة! في انتظار دخول صديقك...";
-        msg.style.color = "orange";
-        document.getElementById("onlineStatusText").textContent = "(الغرفة جاهزة)";
+        document.getElementById("currentServerTitle").textContent = displayName;
+        const currentUser = getCurrentUser();
+        const myName = currentUser ? currentUser.username : "لاعب";
+        showJoinNotification(myName, displayName);
+        updateNameTagDisplay();
+        startParkour();
     });
 
     peer.on('error', (err) => {
         if(err.type === 'unavailable-id') {
-            // إذا كانت الغرفة موجودة مسبقاً، قم بالاتصال بها كضيف
             peer = new Peer();
             peer.on('open', () => {
                 conn = peer.connect(targetId);
                 setupConnectionEvents();
-                msg.textContent = "⏳ جاري الدخول إلى الغرفة...";
-                msg.style.color = "orange";
+                document.getElementById("currentServerTitle").textContent = displayName;
+                const currentUser = getCurrentUser();
+                const myName = currentUser ? currentUser.username : "لاعب";
+                showJoinNotification(myName, displayName);
+                updateNameTagDisplay();
+                
+                if(conn && conn.open) {
+                    conn.send({ type: 'join', name: myName, server: displayName });
+                }
+                startParkour();
             });
         } else {
-            msg.textContent = "❌ حدث خطأ في الاتصال بالغرقة.";
-            msg.style.color = "red";
+            startParkour();
         }
     });
 
     peer.on('connection', (connection) => {
         conn = connection;
         setupConnectionEvents();
-        msg.textContent = "✅ متصل داخل الغرفة مع صديقك بنجاح!";
-        msg.style.color = "#00ffcc";
-        document.getElementById("onlineStatusText").textContent = "(متصل أونلاين)";
+        document.getElementById("onlineStatusText").textContent = "(متصل مع لاعب)";
+        document.getElementById("onlineStatusText").style.color = "#00ffcc";
+        document.getElementById("remotePlayerTag").classList.remove("hidden");
+        if(remotePlayer) remotePlayer.visible = true;
     });
+}
+
+function joinServer(serverKey, displayName) {
+    connectToServer(serverKey, displayName);
+}
+
+function joinCustomServer() {
+    const input = document.getElementById("customServerInput").value.trim();
+    if(!input) {
+        const msg = document.getElementById("serverStatusMsg");
+        msg.textContent = "❌ الرجاء كتابة اسم السيرفر أولاً.";
+        msg.style.color = "red";
+        return;
+    }
+    connectToServer(input, "سيرفر: " + input);
 }
 
 function setupConnectionEvents() {
     if(!conn) return;
     conn.on('open', () => {
-        document.getElementById("onlineStatusMsg").textContent = "✅ متصل داخل الغرفة مع صديقك بنجاح!";
-        document.getElementById("onlineStatusMsg").style.color = "#00ffcc";
-        document.getElementById("onlineStatusText").textContent = "(متصل أونلاين)";
+        document.getElementById("onlineStatusText").textContent = "(متصل مع لاعب)";
+        document.getElementById("onlineStatusText").style.color = "#00ffcc";
+        document.getElementById("remotePlayerTag").classList.remove("hidden");
+        if(remotePlayer) remotePlayer.visible = true;
+        
+        const currentUser = getCurrentUser();
+        const myName = currentUser ? currentUser.username : "لاعب";
+        conn.send({ type: 'join', name: myName, server: currentActiveServerName });
     });
 
     conn.on('data', (data) => {
-        if(remotePlayer && data) {
+        if(data.type === 'pos' && remotePlayer) {
             remotePlayer.position.set(data.x, data.y, data.z);
             remotePlayer.rotation.y = data.rotY;
+        } else if(data.type === 'chat') {
+            showSpeechBubble(false, data.text);
+        } else if(data.type === 'join') {
+            remotePlayerName = data.name;
+            updateNameTagDisplay();
+            showJoinNotification(data.name, data.server);
+            document.getElementById("remotePlayerTag").classList.remove("hidden");
+            if(remotePlayer) remotePlayer.visible = true;
+        } else if(data.type === 'leave') {
+            handleRemotePlayerLeave();
+        } else if(data.type === 'donation') {
+            showDonationEffect(data.from, data.amount);
+        } else if(data.type === 'friendRequest') {
+            updateUI();
         }
+    });
+
+    conn.on('close', () => {
+        handleRemotePlayerLeave();
     });
 }
 
+function handleRemotePlayerLeave() {
+    if(remotePlayer) remotePlayer.visible = false;
+    document.getElementById("remotePlayerTag").classList.add("hidden");
+    document.getElementById("onlineStatusText").textContent = "(بانتظار لاعباً آخر)";
+    document.getElementById("onlineStatusText").style.color = "#ffaa00";
+    showSpeechBubble(false, "تم مغادرت الروم");
+}
+
+function toggleChatPopup() {
+    const popup = document.getElementById("chatPopup");
+    popup.classList.toggle("hidden");
+    if(!popup.classList.contains("hidden")) {
+        document.getElementById("chatInput").focus();
+    }
+}
+
+function sendChatMessage() {
+    const input = document.getElementById("chatInput");
+    const text = input.value.trim();
+    if(!text) return;
+
+    showSpeechBubble(true, text);
+
+    if(conn && conn.open) {
+        conn.send({
+            type: 'chat',
+            text: text
+        });
+    }
+
+    input.value = "";
+    document.getElementById("chatPopup").classList.add("hidden");
+}
+
+let playerBubbleTimer = null;
+let remoteBubbleTimer = null;
+
+function showSpeechBubble(isPlayer, text) {
+    const bubble = document.getElementById(isPlayer ? "playerBubble" : "remoteBubble");
+    if(!bubble) return;
+
+    bubble.textContent = text;
+    bubble.classList.remove("hidden");
+    bubble.style.opacity = "1";
+
+    if(isPlayer) {
+        if(playerBubbleTimer) clearTimeout(playerBubbleTimer);
+        playerBubbleTimer = setTimeout(() => { bubble.style.opacity = "0"; setTimeout(() => bubble.classList.add("hidden"), 300); }, 4000);
+    } else {
+        if(remoteBubbleTimer) clearTimeout(remoteBubbleTimer);
+        remoteBubbleTimer = setTimeout(() => { bubble.style.opacity = "0"; setTimeout(() => bubble.classList.add("hidden"), 300); }, 4000);
+    }
+}
+
 window.addEventListener('load', () => {
-    initPeer();
     const key = localStorage.getItem("ZRXBLOX_CURRENT");
     const users = JSON.parse(localStorage.getItem("ZRXBLOX_USERS") || "{}");
-    if(key && users[key]){ openHome(); }
+    if(key && users[key]){
+        if(users[key].banned) {
+            localStorage.removeItem("ZRXBLOX_CURRENT");
+            alert("❌ هذا الحساب محظور من اللعبة.");
+            return;
+        }
+        if(!users[key].device) {
+            openDeviceModal();
+        } else {
+            openHome();
+        }
+    }
 });
 
 const USERS_KEY="ZRXBLOX_USERS";
@@ -404,6 +765,21 @@ const users=getUsers();
 const key=localStorage.getItem(CURRENT_KEY);
 if(!key || !users[key]) return null;
 return users[key];
+}
+
+function openDeviceModal(){
+    document.getElementById("deviceModal").classList.remove("hidden");
+}
+
+function setPlayerDevice(deviceType){
+    const users=getUsers();
+    const key=localStorage.getItem(CURRENT_KEY);
+    if(key && users[key]){
+        users[key].device = deviceType;
+        saveUsers(users);
+    }
+    document.getElementById("deviceModal").classList.add("hidden");
+    openHome();
 }
 
 function showLogin(){
@@ -435,15 +811,20 @@ username:name,
 password:password,
 coins:0,
 friends:[],
+friendRequests:[],
+donationsReceived:[],
 parkourCompleted:false,
 codeUsed:false,
 ownedClothes:["basic"],
-selectedClothes:"basic"
+selectedClothes:"basic",
+rank:"none",
+banned:false,
+device:null
 };
 
 saveUsers(users);
 localStorage.setItem(CURRENT_KEY,key);
-openHome();
+openDeviceModal();
 }
 
 function login(){
@@ -458,15 +839,26 @@ msg.textContent="اسم اللاعب أو كلمة المرور غير صحيح�
 return;
 }
 
+if(users[key].banned) {
+    msg.textContent="❌ هذا الحساب محظور من اللعبة.";
+    return;
+}
+
 localStorage.setItem(CURRENT_KEY,key);
-openHome();
+if(!users[key].device) {
+    openDeviceModal();
+} else {
+    openHome();
+}
 }
 
 function openHome(){
 document.getElementById("loginPage").classList.add("hidden");
 document.getElementById("registerPage").classList.add("hidden");
+document.getElementById("deviceModal").classList.add("hidden");
 document.getElementById("home").classList.remove("hidden");
 updateUI();
+checkPendingDonations();
 }
 
 function updateUI(){
@@ -479,10 +871,51 @@ document.getElementById("profileCoins").textContent=user.coins;
 document.getElementById("missionCoins").textContent=user.coins;
 document.getElementById("profileName").textContent=user.username;
 document.getElementById("profileClothes").textContent=clothes[user.selectedClothes]?.name || "الأساسي";
+document.getElementById("profileDevice").textContent = user.device === 'pc' ? '🖥️ كمبيوتر (PC)' : (user.device === 'mobile' ? '📱 جوال (Mobile)' : 'غير محدد');
+
+const adminPanel = document.getElementById("adminPanel");
+const ownerAddCoinsPanel = document.getElementById("ownerAddCoinsPanel");
+
+if(user.username === "Alkhalil7_") {
+    adminPanel.classList.remove("hidden");
+    ownerAddCoinsPanel.classList.remove("hidden");
+} else {
+    adminPanel.classList.add("hidden");
+    ownerAddCoinsPanel.classList.add("hidden");
+}
 
 renderFriends();
 renderClothes();
 updateMissionUI();
+}
+
+function ownerAddCoins() {
+    const currentUser = getCurrentUser();
+    const msg = document.getElementById("ownerCoinsMsg");
+
+    if(!currentUser || currentUser.username !== "Alkhalil7_") {
+        msg.textContent = "❌ هذه الميزة مخصصة للمالك فقط!";
+        msg.style.color = "red";
+        return;
+    }
+
+    const amountInput = document.getElementById("ownerCoinsInput").value;
+    const amount = parseInt(amountInput);
+
+    if(isNaN(amount) || amount <= 0) {
+        msg.textContent = "❌ الرجاء إدخال رقم صحيح للعملات.";
+        msg.style.color = "red";
+        return;
+    }
+
+    const users = getUsers();
+    users[currentUser.username].coins = (users[currentUser.username].coins || 0) + amount;
+    saveUsers(users);
+    updateUI();
+
+    msg.textContent = `✅ تم إضافة ${amount} 🪙 عملة بنجاح لرصيدك!`;
+    msg.style.color = "green";
+    document.getElementById("ownerCoinsInput").value = "";
 }
 
 function logout(){
@@ -508,18 +941,131 @@ const targetKey=name;
 
 if(!name){msg.textContent="اكتب اسم اللاعب.";msg.style.color="red";return;}
 if(!users[targetKey]){msg.textContent="هذا اللاعب غير موجود.";msg.style.color="red";return;}
-if(targetKey===currentKey){msg.textContent="لا يمكنك إضافة نفسك.";msg.style.color="red";return;}
+if(targetKey===currentKey){msg.textContent="لا يمكنك إرسال طلب صداقة لنفسك.";msg.style.color="red";return;}
 
 const current=users[currentKey];
 if(!current.friends) current.friends=[];
 if(current.friends.includes(targetKey)){msg.textContent="هذا اللاعب صديقك بالفعل.";msg.style.color="orange";return;}
 
-current.friends.push(targetKey);
+if(!users[targetKey].friendRequests) users[targetKey].friendRequests=[];
+if(users[targetKey].friendRequests.includes(currentKey)){
+    msg.textContent="لقد أرسلت طلب صداقة لهذا اللاعب مسبقاً.";
+    msg.style.color="orange";
+    return;
+}
+
+users[targetKey].friendRequests.push(currentKey);
 saveUsers(users);
-msg.textContent="تمت إضافة اللاعب بنجاح.";
+
+if(conn && conn.open) {
+    conn.send({ type: 'friendRequest', from: currentKey });
+}
+
+msg.textContent="✅ تم إرسال طلب الصداقة بنجاح!";
 msg.style.color="green";
 document.getElementById("friendName").value="";
-renderFriends();
+}
+
+function acceptFriendRequest(fromUser) {
+    const users = getUsers();
+    const currentKey = localStorage.getItem(CURRENT_KEY);
+    if(!users[currentKey] || !users[fromUser]) return;
+
+    if(!users[currentKey].friends) users[currentKey].friends = [];
+    if(!users[fromUser].friends) users[fromUser].friends = [];
+
+    if(!users[currentKey].friends.includes(fromUser)) users[currentKey].friends.push(fromUser);
+    if(!users[fromUser].friends.includes(currentKey)) users[fromUser].friends.push(currentKey);
+
+    users[currentKey].friendRequests = (users[currentKey].friendRequests || []).filter(u => u !== fromUser);
+    saveUsers(users);
+    updateUI();
+}
+
+function declineFriendRequest(fromUser) {
+    const users = getUsers();
+    const currentKey = localStorage.getItem(CURRENT_KEY);
+    if(!users[currentKey]) return;
+
+    users[currentKey].friendRequests = (users[currentKey].friendRequests || []).filter(u => u !== fromUser);
+    saveUsers(users);
+    updateUI();
+}
+
+function applyPlayerRank() {
+    const currentUser = getCurrentUser();
+    const msg = document.getElementById("adminMsg");
+
+    if(!currentUser || currentUser.username !== "Alkhalil7_") {
+        msg.textContent = "❌ ليس لديك صلاحية لتعديل الرتب!";
+        msg.style.color = "red";
+        return;
+    }
+
+    const targetName = document.getElementById("targetPlayerInput").value.trim();
+    const selectedRank = document.getElementById("rankSelect").value;
+    const users = getUsers();
+
+    if(!targetName) {
+        msg.textContent = "❌ الرجاء كتابة اسم اللاعب.";
+        msg.style.color = "red";
+        return;
+    }
+    if(!users[targetName]) {
+        msg.textContent = "❌ هذا اللاعب غير مسجل في النظام.";
+        msg.style.color = "red";
+        return;
+    }
+    if(targetName === "Alkhalil7_" && selectedRank !== "owner") {
+        msg.textContent = "⚠️ لا يمكنك تغيير رتبة المالك الأساسي!";
+        msg.style.color = "orange";
+        return;
+    }
+
+    users[targetName].rank = selectedRank;
+    saveUsers(users);
+
+    msg.textContent = `✅ تم تحديث رتبة اللاعب ${targetName} بنجاح!`;
+    msg.style.color = "green";
+    document.getElementById("targetPlayerInput").value = "";
+    updateUI();
+}
+
+function banPlayerAccount() {
+    const currentUser = getCurrentUser();
+    const msg = document.getElementById("adminMsg");
+
+    if(!currentUser || currentUser.username !== "Alkhalil7_") {
+        msg.textContent = "❌ ليس لديك صلاحية لحظر اللاعبين!";
+        msg.style.color = "red";
+        return;
+    }
+
+    const targetName = document.getElementById("targetPlayerInput").value.trim();
+    const users = getUsers();
+
+    if(!targetName) {
+        msg.textContent = "❌ الرجاء كتابة اسم اللاعب.";
+        msg.style.color = "red";
+        return;
+    }
+    if(!users[targetName]) {
+        msg.textContent = "❌ هذا اللاعب غير مسجل في النظام.";
+        msg.style.color = "red";
+        return;
+    }
+    if(targetName === "Alkhalil7_") {
+        msg.textContent = "⚠️ لا يمكنك حظر حساب المالك!";
+        msg.style.color = "orange";
+        return;
+    }
+
+    users[targetName].banned = true;
+    saveUsers(users);
+
+    msg.textContent = `⛔ تم حظر اللاعب ${targetName} بنجاح من اللعبة.`;
+    msg.style.color = "red";
+    document.getElementById("targetPlayerInput").value = "";
 }
 
 function sendDonation(){
@@ -540,7 +1086,15 @@ if((currentUser.coins||0)<amountVal){msg.textContent="❌ لا تملك رصيد
 currentUser.coins-=amountVal;
 users[targetName].coins=(users[targetName].coins||0)+amountVal;
 
+if(!users[targetName].donationsReceived) users[targetName].donationsReceived = [];
+users[targetName].donationsReceived.push({ from: currentKey, amount: amountVal });
+
 saveUsers(users);
+
+if(conn && conn.open) {
+    conn.send({ type: 'donation', from: currentKey, amount: amountVal });
+}
+
 updateUI();
 
 msg.textContent=`✅ تم التبرع بنجاح بمبلغ ${amountVal} 🪙 للاعب ${targetName}!`;
@@ -549,23 +1103,129 @@ document.getElementById("donateTargetName").value="";
 document.getElementById("donateAmount").value="";
 }
 
+function checkPendingDonations() {
+    const users = getUsers();
+    const key = localStorage.getItem(CURRENT_KEY);
+    if(!key || !users[key]) return;
+
+    const list = users[key].donationsReceived || [];
+    if(list.length > 0) {
+        const item = list.shift();
+        saveUsers(users);
+        showDonationEffect(item.from, item.amount);
+    }
+}
+
+function showDonationEffect(fromUser, amount) {
+    const modal = document.getElementById("donationModal");
+    const text = document.getElementById("donationModalText");
+    text.innerHTML = `قام اللاعب <span style="color:#00cc99;">${fromUser}</span> بالتبرع لك بمبلغ:<br><span style="font-size:26px;color:#d4af37;">🪙 ${amount} عملة!</span>`;
+    modal.classList.remove("hidden");
+    triggerFireworks();
+}
+
+function closeDonationModal() {
+    document.getElementById("donationModal").classList.add("hidden");
+    checkPendingDonations();
+}
+
+function triggerFireworks() {
+    const canvas = document.getElementById("fireworksCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.style.display = "block";
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+    const colors = ['#ff0000', '#00ffcc', '#ffff00', '#ff00ff', '#00ff00', '#ffffff', '#ff9900'];
+
+    for (let i = 0; i < 150; i++) {
+        particles.push({
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            vx: (Math.random() - 0.5) * 16,
+            vy: (Math.random() - 0.5) * 16,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            radius: Math.random() * 5 + 2,
+            alpha: 1,
+            decay: Math.random() * 0.015 + 0.008
+        });
+    }
+
+    let animId;
+    function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+            if (p.alpha > 0) {
+                alive = true;
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.12;
+                p.alpha -= p.decay;
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        });
+
+        if (alive) {
+            animId = requestAnimationFrame(render);
+        } else {
+            canvas.style.display = "none";
+            cancelAnimationFrame(animId);
+        }
+    }
+    render();
+}
+
 function renderFriends(){
 const list=document.getElementById("friendList");
+const reqList=document.getElementById("friendRequestsList");
 const users=getUsers();
 const key=localStorage.getItem(CURRENT_KEY);
 if(!key || !users[key]) return;
 
-list.innerHTML="";
-const friends=users[key].friends||[];
-if(friends.length===0){list.innerHTML="<p>لا يوجد أصدقاء حتى الآن.</p>";return;}
+if(reqList) {
+    reqList.innerHTML = "";
+    const requests = users[key].friendRequests || [];
+    if(requests.length === 0) {
+        reqList.innerHTML = "<p style='color:#777;'>لا توجد طلبات صداقة جديدة.</p>";
+    } else {
+        requests.forEach(reqUser => {
+            const card = document.createElement("div");
+            card.className = "friend-request-card";
+            card.innerHTML = `
+                <div>
+                    <b>${reqUser}</b> يريد إضافة صديق معك
+                </div>
+                <div style="display:flex; gap:6px;">
+                    <button onclick="acceptFriendRequest('${reqUser}')" style="background:#00ffcc; color:#111; padding:8px 14px; border-radius:8px; font-weight:bold;">قبول ✅</button>
+                    <button onclick="declineFriendRequest('${reqUser}')" style="background:#ffdddd; color:#d32f2f; padding:8px 14px; border-radius:8px; font-weight:bold;">رفض ❌</button>
+                </div>
+            `;
+            reqList.appendChild(card);
+        });
+    }
+}
 
-friends.forEach(friendKey=>{
-if(!users[friendKey]) return;
-const div=document.createElement("div");
-div.className="friend";
-div.innerHTML=`<div class="avatar">${users[friendKey].username[0]}</div><div><b>${users[friendKey].username}</b><br><span style="color:green">● صديق</span></div>`;
-list.appendChild(div);
-});
+if(list) {
+    list.innerHTML="";
+    const friends=users[key].friends||[];
+    if(friends.length===0){list.innerHTML="<p style='color:#777;'>لا يوجد أصدقاء حتى الآن.</p>";return;}
+
+    friends.forEach(friendKey=>{
+        if(!users[friendKey]) return;
+        const div=document.createElement("div");
+        div.className="friend";
+        div.innerHTML=`<div class="avatar">${users[friendKey].username[0]}</div><div><b>${users[friendKey].username} [👥]</b><br><span style="color:green">● صديق مقرب</span></div>`;
+        list.appendChild(div);
+    });
+}
 }
 
 function openMissions(){
@@ -815,7 +1475,7 @@ saveUsers(users);
 updateUI();
 }
 
-let scene,camera,renderer,player;
+let scene,camera,renderer,player,remotePlayer;
 let platforms=[];
 let gameRunning=false;
 let velocityY=0;
@@ -824,17 +1484,67 @@ let cameraYaw=0,cameraPitch=0;
 let looking=false,lastTouchX=0,lastTouchY=0;
 let joystickX=0,joystickY=0,joystickActive=false,jumpPressed=false;
 
+// متغيرات تحكم الكمبيوتر الجديدة
+let pcKeys = { w: false, a: false, s: false, d: false };
+let isRightMouseDown = false;
+let pcLastMouseX = 0;
+let pcLastMouseY = 0;
+
 function startParkour(){
+const currentUser=getCurrentUser();
+if(currentUser && currentUser.banned) {
+    alert("❌ حسابك محظور.");
+    return;
+}
+
+const flyBtn = document.getElementById("flyBtn");
+if(currentUser && currentUser.username === "Alkhalil7_") {
+    flyBtn.classList.remove("hidden");
+} else {
+    flyBtn.classList.add("hidden");
+}
+
+// إظهار أو إخفاء تحكم الجوال بناءً على ما اختاره المستخدم
+const mobileControls = document.getElementById("mobileControlsContainer");
+if(currentUser && currentUser.device === 'pc') {
+    mobileControls.classList.add("hidden");
+} else {
+    mobileControls.classList.remove("hidden");
+}
+
 document.getElementById("home").classList.add("hidden");
 document.getElementById("game3d").classList.remove("hidden");
+updateNameTagDisplay();
 if(!renderer){init3D();}else{restartParkour();}
 }
 
 function exitParkour(){
 gameRunning=false;
+isFlying = false;
+
+if(conn && conn.open) {
+    conn.send({ type: 'leave' });
+}
+if(peer) {
+    peer.destroy();
+    peer = null;
+    conn = null;
+}
+
 document.getElementById("game3d").classList.add("hidden");
 document.getElementById("home").classList.remove("hidden");
 updateUI();
+}
+
+function toggleFlyMode() {
+    isFlying = !isFlying;
+    const flyBtn = document.getElementById("flyBtn");
+    if(isFlying) {
+        flyBtn.style.background = "#00ffcc";
+        velocityY = 0;
+    } else {
+        flyBtn.style.background = "#ffaa00";
+    }
 }
 
 function init3D(){
@@ -869,6 +1579,7 @@ scene.add(player);
 
 remotePlayer=createAvatarMesh();
 remotePlayer.position.set(0,0.9,0);
+remotePlayer.visible = false;
 scene.add(remotePlayer);
 
 applyGameClothes();
@@ -895,19 +1606,62 @@ scene.add(mesh);
 platforms.push(mesh);
 }
 
+function updateTagPosition(mesh, tagId) {
+    const tag = document.getElementById(tagId);
+    if(!tag || tag.classList.contains("hidden") || !mesh.visible) return;
+
+    const tempV = new THREE.Vector3(mesh.position.x, mesh.position.y + 3.1, mesh.position.z);
+    tempV.project(camera);
+
+    const x = (tempV.x * .5 + .5) * innerWidth;
+    const y = (-(tempV.y * .5) + .5) * innerHeight;
+
+    tag.style.left = `${x}px`;
+    tag.style.top = `${y}px`;
+}
+
+function updateSpeechBubblePosition(mesh, bubbleId) {
+    const bubble = document.getElementById(bubbleId);
+    if(!bubble || bubble.classList.contains("hidden")) return;
+
+    const tempV = new THREE.Vector3(mesh.position.x, mesh.position.y + 3.8, mesh.position.z);
+    tempV.project(camera);
+
+    const x = (tempV.x * .5 + .5) * innerWidth;
+    const y = (-(tempV.y * .5) + .5) * innerHeight;
+
+    bubble.style.left = `${x}px`;
+    bubble.style.top = `${y}px`;
+}
+
 function animate(){
 if(!gameRunning)return;
 requestAnimationFrame(animate);
+
+// حساب اتجاه الحركة للكمبيوتر أو الجوال
+let moveX = joystickX;
+let moveY = joystickY;
+
+const currentUser = getCurrentUser();
+if(currentUser && currentUser.device === 'pc') {
+    moveX = 0;
+    moveY = 0;
+    if(pcKeys.a) moveX = -1;
+    if(pcKeys.d) moveX = 1;
+    if(pcKeys.w) moveY = -1;
+    if(pcKeys.s) moveY = 1;
+}
 
 const forward=new THREE.Vector3(-Math.sin(cameraYaw),0,-Math.cos(cameraYaw));
 const right=new THREE.Vector3(Math.cos(cameraYaw),0,-Math.sin(cameraYaw));
 const speed=0.13;
 
-player.position.x+=(right.x*joystickX+forward.x*(-joystickY))*speed;
-player.position.z+=(right.z*joystickX+forward.z*(-joystickY))*speed;
+player.position.x+=(right.x*moveX+forward.x*(-moveY))*speed;
+player.position.z+=(right.z*moveX+forward.z*(-moveY))*speed;
 
 if(conn && conn.open) {
     conn.send({
+        type: 'pos',
         x: player.position.x,
         y: player.position.y,
         z: player.position.z,
@@ -915,32 +1669,38 @@ if(conn && conn.open) {
     });
 }
 
-velocityY-=0.025;
-player.position.y+=velocityY;
-onGround=false;
+if(isFlying) {
+    velocityY = 0;
+    if(jumpPressed) player.position.y += 0.2;
+    onGround = true;
+} else {
+    velocityY-=0.025;
+    player.position.y+=velocityY;
+    onGround=false;
 
-platforms.forEach(p=>{
-const halfX=p.geometry.parameters.width/2;
-const halfZ=p.geometry.parameters.depth/2;
-const playerBottom=player.position.y;
-const top=p.position.y+p.geometry.parameters.height/2;
+    platforms.forEach(p=>{
+    const halfX=p.geometry.parameters.width/2;
+    const halfZ=p.geometry.parameters.depth/2;
+    const playerBottom=player.position.y;
+    const top=p.position.y+p.geometry.parameters.height/2;
 
-if(player.position.x>p.position.x-halfX-0.45 && player.position.x<p.position.x+halfX+0.45 &&
-player.position.z>p.position.z-halfZ-0.45 && player.position.z<p.position.z+halfZ+0.45 &&
-playerBottom<=top+0.15 && playerBottom>=top-0.5){
-player.position.y=top;
-velocityY=0;
-onGround=true;
-}
-});
+    if(player.position.x>p.position.x-halfX-0.45 && player.position.x<p.position.x+halfX+0.45 &&
+    player.position.z>p.position.z-halfZ-0.45 && player.position.z<p.position.z+halfZ+0.45 &&
+    playerBottom<=top+0.15 && playerBottom>=top-0.5){
+    player.position.y=top;
+    velocityY=0;
+    onGround=true;
+    }
+    });
 
-if(jumpPressed && onGround){
-velocityY=0.32;
-onGround=false;
+    if(jumpPressed && onGround){
+    velocityY=0.32;
+    onGround=false;
+    }
 }
 jumpPressed=false;
 
-if(player.position.y<-8){
+if(!isFlying && player.position.y<-8){
 player.position.set(0,0.9,2);
 velocityY=0;
 }
@@ -962,33 +1722,69 @@ camera.position.y=Math.max(minimumCameraHeight,calculatedHeight);
 
 camera.lookAt(player.position.x,player.position.y+1.45,player.position.z);
 
+updateTagPosition(player, "playerTag");
+updateTagPosition(remotePlayer, "remotePlayerTag");
+updateSpeechBubblePosition(player, "playerBubble");
+updateSpeechBubblePosition(remotePlayer, "remoteBubble");
+
 renderer.render(scene,camera);
 }
 
 const canvas=document.getElementById("gameCanvas");
 if(canvas){
+// منع قائمة الكليك الأيمن الافتراضية للماوس
+canvas.addEventListener("contextmenu", e => e.preventDefault());
+
 canvas.addEventListener("pointerdown",e=>{
-if(e.clientX<innerWidth*0.45) return;
-looking=true;
-lastTouchX=e.clientX;
-lastTouchY=e.clientY;
-canvas.setPointerCapture(e.pointerId);
+    const currentUser = getCurrentUser();
+    // تفعيل الكليك الأيمن للكمبيوتر لتحريك الشاشة
+    if(currentUser && currentUser.device === 'pc') {
+        if(e.button === 2) { // الزر الأيمن للماوس
+            isRightMouseDown = true;
+            pcLastMouseX = e.clientX;
+            pcLastMouseY = e.clientY;
+            canvas.setPointerCapture(e.pointerId);
+            return;
+        }
+    }
+
+    if(e.clientX<innerWidth*0.45) return;
+    looking=true;
+    lastTouchX=e.clientX;
+    lastTouchY=e.clientY;
+    canvas.setPointerCapture(e.pointerId);
 });
 
 canvas.addEventListener("pointermove",e=>{
-if(!looking)return;
-const dx=e.clientX-lastTouchX;
-const dy=e.clientY-lastTouchY;
-lastTouchX=e.clientX;
-lastTouchY=e.clientY;
+    const currentUser = getCurrentUser();
+    if(currentUser && currentUser.device === 'pc' && isRightMouseDown) {
+        const dx = e.clientX - pcLastMouseX;
+        const dy = e.clientY - pcLastMouseY;
+        pcLastMouseX = e.clientX;
+        pcLastMouseY = e.clientY;
 
-cameraYaw-=dx*0.008;
-cameraPitch-=dy*0.006;
-cameraPitch=Math.max(-0.15,Math.min(0.75,cameraPitch));
+        cameraYaw -= dx * 0.008;
+        cameraPitch -= dy * 0.006;
+        cameraPitch = Math.max(-0.15, Math.min(0.75, cameraPitch));
+        return;
+    }
+
+    if(!looking)return;
+    const dx=e.clientX-lastTouchX;
+    const dy=e.clientY-lastTouchY;
+    lastTouchX=e.clientX;
+    lastTouchY=e.clientY;
+
+    cameraYaw-=dx*0.008;
+    cameraPitch-=dy*0.006;
+    cameraPitch=Math.max(-0.15,Math.min(0.75,cameraPitch));
 });
 
-canvas.addEventListener("pointerup",()=>{looking=false;});
-canvas.addEventListener("pointercancel",()=>{looking=false;});
+canvas.addEventListener("pointerup",e=>{
+    if(e.button === 2) isRightMouseDown = false;
+    looking=false;
+});
+canvas.addEventListener("pointercancel",()=>{ looking=false; isRightMouseDown=false; });
 }
 
 const joystick=document.getElementById("joystick");
@@ -1016,8 +1812,8 @@ const centerX=rect.left+rect.width/2;
 const centerY=rect.top+rect.height/2;
 let x=e.clientX-centerX;
 let y=e.clientY-centerY;
-const max=35;
-const distance=Math.sqrt(x*x+y*y);
+let max=35;
+let distance=Math.sqrt(x*x+y*y);
 
 if(distance>max){
 x=x/distance*max;
@@ -1045,16 +1841,49 @@ jumpPressed=true;
 }
 
 addEventListener("keydown",e=>{
-if(e.key==="ArrowLeft" || e.key==="a") joystickX=-1;
-if(e.key==="ArrowRight" || e.key==="d") joystickX=1;
-if(e.key==="ArrowUp" || e.key==="w") joystickY=-1;
-if(e.key==="ArrowDown" || e.key==="s") joystickY=1;
-if(e.key===" " && !e.repeat) jumpPressed=true;
+if(document.activeElement.id === "chatInput") {
+    if(e.key === "Enter") {
+        sendChatMessage();
+    }
+    return;
+}
+
+const currentUser = getCurrentUser();
+const isPC = currentUser && currentUser.device === 'pc';
+
+if(isPC) {
+    if(e.key === "a" || e.key === "A") pcKeys.a = true;
+    if(e.key === "d" || e.key === "D") pcKeys.d = true;
+    if(e.key === "w" || e.key === "W") pcKeys.w = true;
+    if(e.key === "s" || e.key === "S") pcKeys.s = true;
+    if(e.code === "Space" && !e.repeat) {
+        e.preventDefault();
+        jumpPressed = true;
+    }
+} else {
+    if(e.key==="ArrowLeft" || e.key==="a") joystickX=-1;
+    if(e.key==="ArrowRight" || e.key==="d") joystickX=1;
+    if(e.key==="ArrowUp" || e.key==="w") joystickY=-1;
+    if(e.key==="ArrowDown" || e.key==="s") joystickY=1;
+    if(e.key===" " && !e.repeat) jumpPressed=true;
+}
+
+if(e.key==="f" && currentUser?.username === "Alkhalil7_") toggleFlyMode();
 });
 
 addEventListener("keyup",e=>{
-if(["ArrowLeft","ArrowRight","a","d"].includes(e.key)) joystickX=0;
-if(["ArrowUp","ArrowDown","w","s"].includes(e.key)) joystickY=0;
+const currentUser = getCurrentUser();
+const isPC = currentUser && currentUser.device === 'pc';
+
+if(isPC) {
+    if(e.key === "a" || e.key === "A") pcKeys.a = false;
+    if(e.key === "d" || e.key === "D") pcKeys.d = false;
+    if(e.key === "w" || e.key === "W") pcKeys.w = false;
+    if(e.key === "s" || e.key === "S") pcKeys.s = false;
+} else {
+    if(["ArrowLeft","ArrowRight","a","d"].includes(e.key)) joystickX=0;
+    if(["ArrowUp","ArrowDown","w","s"].includes(e.key)) joystickY=0;
+}
 });
 
 function restartParkour(){
@@ -1063,7 +1892,9 @@ player.position.set(0,0.9,2);
 velocityY=0;
 cameraYaw=0;
 cameraPitch=0;
+isFlying = false;
 resetJoystick();
+pcKeys = { w: false, a: false, s: false, d: false };
 applyGameClothes();
 gameRunning=true;
 animate();
